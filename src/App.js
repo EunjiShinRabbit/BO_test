@@ -1,36 +1,37 @@
 import { useState, useEffect } from "react";
 import Pagination from './Pagination';
+import "./App.css"
+import { useDispatch, useSelector } from "react-redux";
+import { setLimit, setPage, setPageStart, setSearchType, setSearchInput } from "./searchSlice";
 
 function App() {
+  
   const [lists, setLists] = useState('');
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
-  const offset = (page - 1) * limit;
-  const [pageStart, setPageStart] = useState(0);
-  const [searchType, setSearchType] = useState('all')
-  const [searchInput, setSearchInput] = useState('');
+  const searchInfo = useSelector((state) => state.searchInfo);
+  const offset = (searchInfo.page - 1) * searchInfo.limit;
+  //dispatch에 action을 전달하면 해당 동작이 실행된다
+  const dispatch = useDispatch();
 
-  const getData = async () => {
-    fetch(
-      "https://dummyjson.com/products?limit=100"
-    ).then(res => res.json())
-    .then(res => setLists(res.products));
-  };
+  const handleLimit = (value) => dispatch(setLimit(value));
+  const handlePage = (value) => dispatch(setPage(value));
+  const handlePageStart = (value) => dispatch(setPageStart(value));
+  const handleSearchType = (value) => dispatch(setSearchType(value));
+  const handleSearchInput = (value) => dispatch(setSearchInput(value));
 
   const getSearchData = async () => {
     fetch(
       "https://dummyjson.com/products?limit=100"
     ).then(res => res.json())
     .then(res => {
-      if(searchType === "all"){
+      if(searchInfo.searchType === "all"){
         setLists(res.products.filter(e => 
-          e.title.includes(searchInput)||e.brand.includes(searchInput)||e.description.includes(searchInput)))
-      } else if(searchType === "title"){
-        setLists(res.products.filter(e => e.title.includes(searchInput)))
-      } else if(searchType === "brand"){
-        setLists(res.products.filter(e => e.brand.includes(searchInput)))
-      }else if(searchType === "desc"){
-        setLists(res.products.filter(e => e.description.includes(searchInput)))
+          e.title.includes(searchInfo.searchInput)||e.brand.includes(searchInfo.searchInput)||e.description.includes(searchInfo.searchInput)))
+      } else if(searchInfo.searchType === "title"){
+        setLists(res.products.filter(e => e.title.includes(searchInfo.searchInput)))
+      } else if(searchInfo.searchType === "brand"){
+        setLists(res.products.filter(e => e.brand.includes(searchInfo.searchInput)))
+      }else if(searchInfo.searchType === "desc"){
+        setLists(res.products.filter(e => e.description.includes(searchInfo.searchInput)))
       } 
     });
   };
@@ -46,62 +47,61 @@ function App() {
         <div>
           <p>검색</p>
           <select
-              value={searchType}
+              value={searchInfo.searchType}
               onChange={(e) => {
-                setSearchType(e.target.value)
+                handleSearchType(e.target.value)
               }}
             >
               <option value="all">전체</option>
               <option value="title">상품명</option>
               <option value="brand">브랜드</option>
               <option value="desc">상품내용</option>
-            </select>
-            <input type="text" value ={searchInput} 
-            onChange={(e)=>{ setSearchInput(e.target.value);}}/>
-            <button onClick={getSearchData}>조회</button>
+          </select>
+          <input type="text" value ={searchInfo.searchInput} 
+          onChange={(e)=>{ handleSearchInput(e.target.value);}}/>
+          <button onClick={getSearchData}>조회</button>
         </div>
       </div>
       <p>검색된 데이터:{lists.length}건</p>
       <div>
-      <table className="table">
-            <thead>
-              <tr>
-                <th>상품번호</th>
-                <th>상품명</th>
-                <th>브랜드</th>
-                <th>상품내용</th>
-                <th>가격</th>
-                <th>평점</th>
-                <th>재고</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lists &&
-                lists.slice(offset, offset + limit)
-                .map(({ id, title, brand, description, rating, price, stock }) => (
-                  <tr key={id}>
-                    <td>{id}</td>
-                    <td>{title}</td>
-                    <td>{brand}</td>
-                    <td>{description}</td>
-                    <td>{price}</td>
-                    <td>{rating}</td>
-                    <td>{stock}</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>상품번호</th>
+              <th>상품명</th>
+              <th>브랜드</th>
+              <th>상품내용</th>
+              <th>가격</th>
+              <th>평점</th>
+              <th>재고</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lists &&
+              lists.slice(offset, offset + searchInfo.limit)
+              .map(({ id, title, brand, description, rating, price, stock }) => (
+                <tr key={id}>
+                  <td>{id}</td>
+                  <td>{title}</td>
+                  <td>{brand}</td>
+                  <td>{ description.length <= 40? description : description.substring(0, 40)+"..."}</td>
+                  <td>{price}</td>
+                  <td>{rating}</td>
+                  <td>{stock}</td>
+                </tr>
+            ))}
+          </tbody>
+        </table>
         <div>
           <label className="pageselect">
-            페이지 당 행:&nbsp;
+          페이지 당 행:&nbsp;
             <select
               type="number"
-              value={limit}
+              value={searchInfo.limit}
               onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(1);
-                setPageStart(0);
+                handleLimit(Number(e.target.value));
+                handlePage(1);
+                handlePageStart(0);
               }}
             >
               <option value="10" selected>10</option>
@@ -111,16 +111,15 @@ function App() {
           </label>
           <Pagination
           total={lists.length}
-          limit={limit}
-          page={page}
-          setPage={setPage}
-          pageStart={pageStart}
-          setPageStart={setPageStart}
+          limit={searchInfo.limit}
+          page={searchInfo.page}
+          setPage={handlePage}
+          pageStart={searchInfo.pageStart}
+          setPageStart={handlePageStart}
           />
         </div>
       </div>
     </div>
-
   );
 }
 

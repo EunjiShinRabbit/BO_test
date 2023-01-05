@@ -1,0 +1,67 @@
+body{
+  background-color: #f3f3f3;
+}
+table{
+  white-space:nowrap;
+  text-align: center;
+  border-spacing: 10px 20px;
+  border-collapse: separate;
+}
+.App{
+  min-width: max-content;
+}
+.App >div:nth-child(1){
+  background-color: #fff;
+  margin: 10px;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+}
+.App >p:nth-child(2){
+  padding: 10px;
+}
+.App >div:nth-child(3){
+  background-color: #fff;
+  margin: 10px;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+}
+.App >div:nth-child(3)>div:nth-child(2){
+  margin: 10px;
+  display: flex;
+}
+.App >div:nth-child(1)>:nth-child(1){
+  padding: 10px;
+}
+.App >div:nth-child(1)>div:nth-child(2){
+  border-top: 1px solid #e3e3e3;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+select,input{
+  border-radius: 5px;
+  border: 1px solid #e3e3e3;
+}
+button{
+  padding: 2px 8px 2px 8px;
+  margin: 0px 2px 0px 2px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;;
+}
+button:hover {
+  background: rgba(163, 106, 255, 0.3);
+  cursor: pointer;
+}
+
+button[disabled] {
+  background: #e3e3e3;
+  cursor: revert;
+}
+
+button[aria-current] {
+  background: rgba(255, 239, 150, 0.6);
+  font-weight: bold;
+  cursor: revert;
+}
+

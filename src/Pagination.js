@@ -15,7 +15,7 @@ const Pagination = ({total, limit, page, setPage, pageStart, setPageStart}) => {
           setPage(1); 
           setPageStart(0);
           }} 
-        disabled={page === 1}>
+        disabled={page == 1}>
         &lt;&lt;
       </button>
       <button 
@@ -23,7 +23,7 @@ const Pagination = ({total, limit, page, setPage, pageStart, setPageStart}) => {
           setPage(page - 1); 
           setPageStart(Math.floor((page - 2) / 10));
           }} 
-        disabled={page === 1}>
+        disabled={page == 1}>
         &lt;
       </button>
       {Array(viewPages)
@@ -36,7 +36,7 @@ const Pagination = ({total, limit, page, setPage, pageStart, setPageStart}) => {
                 onClick={() => {
                   setPage(pageStart * 10 + i + 1);
                 }}
-                aria-current={page === pageStart * 10 + i + 1 ? "page" : null}
+                aria-current={page == pageStart * 10 + i + 1 ? "page" : null}
               >
                 {pageStart * 10 + i + 1}
               </button>
@@ -47,16 +47,16 @@ const Pagination = ({total, limit, page, setPage, pageStart, setPageStart}) => {
           setPage(page + 1); 
           setPageStart(Math.floor(page / 10));
       }}
-        disabled={page === numPages}
+        disabled={page == numPages}
       >
         &gt;
       </button>
       <button 
         onClick={() =>{
           setPage(numPages); 
-          setPageStart(Math.floor(numPages / 10));
+          setPageStart(Math.floor(numPages / 10) - 1);
       }}
-        disabled={page === numPages}
+        disabled={page == numPages}
       >
         &gt;&gt;
       </button>
